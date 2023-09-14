@@ -42,44 +42,6 @@ public extension String {
         return retVal
     }
 
-    func coverImage(titleColor: UIColor, fillColor: UIColor) -> UIImage? {
-
-        let dimension = UIScreen.main.bounds.width
-        let fontSize = round(dimension * 0.36)
-
-        let coverSize = CGSize(width: dimension, height: dimension)
-
-        UIGraphicsBeginImageContextWithOptions(coverSize, false, 0)
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-
-        let font = UIFont.systemRoundedFont(ofSize: fontSize, weight: .bold)
-
-        let textAttributes: [NSAttributedString.Key: Any] = [
-            .font: font,
-            .paragraphStyle: paragraphStyle,
-            .foregroundColor: titleColor
-        ]
-
-        //
-
-        let canvasRect = CGRect(origin: .zero, size: coverSize)
-        let context = UIGraphicsGetCurrentContext()
-        context?.setFillColor(fillColor.cgColor)
-        context?.fill(canvasRect)
-
-        //
-
-        let rect = CGRect(origin: CGPoint(x: 0, y: (coverSize.height - font.pointSize) / 2 - 8),
-                          size: coverSize)
-
-        (self as NSString).draw(in: rect, withAttributes: textAttributes)
-
-        defer { UIGraphicsEndImageContext() }
-        return UIGraphicsGetImageFromCurrentImageContext()
-    }
-
     func inLimit(of number: Int) -> Bool {
         let limitRange = 0...number
         return limitRange.contains(count)
