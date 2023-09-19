@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppKit",
+    name: "AppHelpers",
     platforms: [
         .iOS(.v13)
     ],
