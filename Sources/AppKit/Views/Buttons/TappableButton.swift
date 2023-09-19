@@ -13,24 +13,14 @@ open class TappableButton: BiggerAreaButton {
     // MARK: - Public properties
 
     open override var isEnabled: Bool {
-        didSet { alpha = isEnabled ? 1.0 : 0.5 }
-    }
-
-    //
-    // MARK: - Public Accessors
-
-    public func onTap(completion: @escaping TypeClosure<TappableButton>) {
-        addTarget(self, action: #selector(onTapEvent(_:)), for: .touchUpInside)
-        tapClosure = completion
+        didSet {
+            alpha = isEnabled ? 1.0 : 0.5
+        }
     }
 
     public var isLoading: Bool = false {
         didSet {
             if isLoading {
-                addSubview(indicatorView) {
-                    $0.edges.equalToSuperview().inset(12)
-                }
-
                 indicatorView.startAnimating()
                 tempTitleStorage = title(for: .normal)
                 tempImageStorage = image(for: .normal)
@@ -39,16 +29,40 @@ open class TappableButton: BiggerAreaButton {
                 imageView?.alpha = 0
             } else if let tempTitleStorage = tempTitleStorage {
                 indicatorView.stopAnimating()
-                indicatorView.removeFromSuperview()
                 setTitle(tempTitleStorage, for: .normal)
                 setImage(tempImageStorage, for: .normal)
                 imageView?.alpha = 1
-                setNeedsLayout()
             } else if image(for: .normal) != nil {
                 indicatorView.stopAnimating()
                 imageView?.alpha = 1
             }
         }
+    }
+
+    // MARK: - Private properties
+
+    private var tapClosure: TypeClosure<TappableButton>?
+    private var tempTitleStorage: String?
+    private var tempImageStorage: UIImage?
+    private var indicatorView: UIActivityIndicatorView!
+
+    // MARK: - Initializers
+
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupUI()
+    }
+
+    public required init?(coder: NSCoder) {
+        fatalError(#function)
+    }
+
+    // MARK: - Public methods
+
+    public func onTap(completion: @escaping TypeClosure<TappableButton>) {
+        addTarget(self, action: #selector(onTapEvent(_:)), for: .touchUpInside)
+        tapClosure = completion
     }
 
     public func setIsLoading(_ value: Bool, animated: Bool) {
@@ -74,17 +88,19 @@ open class TappableButton: BiggerAreaButton {
         }
     }
 
-    //
-    // MARK: - Private Stuff
+    // MARK: - Private methods
 
-    private var tapClosure: TypeClosure<TappableButton>?
-    private var tempTitleStorage: String?
-    private var tempImageStorage: UIImage?
+    private func setupUI() {
+        indicatorView = UIActivityIndicatorView().then { view in
+            view.color = titleColor(for: .normal)
+            view.hidesWhenStopped = true
+            view.stopAnimating()
 
-    private lazy var indicatorView = UIActivityIndicatorView().then { view in
-        view.color = titleColor(for: .normal)
-        view.hidesWhenStopped = true
-        view.stopAnimating()
+            addSubview(view) {
+                $0.center.equalToSuperview()
+                $0.size.equalTo(20)
+            }
+        }
     }
 
     @objc
