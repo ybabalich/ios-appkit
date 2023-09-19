@@ -21,20 +21,19 @@ open class TappableButton: BiggerAreaButton {
     public var isLoading: Bool = false {
         didSet {
             if isLoading {
+                titleLabel?.isHidden = true
+                if #available(iOS 15.0, *) {
+                    subtitleLabel?.isHidden = true
+                }
+                imageView?.isHidden = true
                 indicatorView.startAnimating()
-                tempTitleStorage = title(for: .normal)
-                tempImageStorage = image(for: .normal)
-                setTitle(nil, for: .normal)
-                setImage(nil, for: .normal)
-                imageView?.alpha = 0
-            } else if let tempTitleStorage = tempTitleStorage {
+            } else {
+                titleLabel?.isHidden = false
+                if #available(iOS 15.0, *) {
+                    subtitleLabel?.isHidden = false
+                }
+                imageView?.isHidden = false
                 indicatorView.stopAnimating()
-                setTitle(tempTitleStorage, for: .normal)
-                setImage(tempImageStorage, for: .normal)
-                imageView?.alpha = 1
-            } else if image(for: .normal) != nil {
-                indicatorView.stopAnimating()
-                imageView?.alpha = 1
             }
         }
     }
